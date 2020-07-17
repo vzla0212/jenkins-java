@@ -1,15 +1,15 @@
 pipeline {
-    agent { docker { image 'nginx' } }
+    agent any
     stages {
-        stage('build') {
+        stage('Deploy') {
             steps {
-                sh 'pwd'
-                sh 'echo "Hello World"'
-                sh '''
-                    echo "Multiline shell steps works too"
-                    ls -lah
-                '''
-		sh 'echo $USER'
+                retry(3) {
+                    sh './flakey-deploy.sh'
+                }
+
+                timeout(time: 3, unit: 'MINUTES') {
+                    sh './health-check.sh'
+                }
             }
         }
     }
