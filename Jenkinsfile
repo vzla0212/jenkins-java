@@ -1,15 +1,20 @@
 pipeline {
-    agent { docker { image 'nginx' } }
+    agent none
     stages {
-        stage('build') {
+        stage('Back-end') {
+            agent {
+                docker { image 'maven:3-alpine' }
+            }
             steps {
-                sh 'pwd'
-                sh 'echo "Hello World"'
-                sh '''
-                    echo "Multiline shell steps works too"
-                    ls -lah
-                '''
-		sh 'echo $USER'
+                sh 'mvn --version'
+            }
+        }
+        stage('Front-end') {
+            agent {
+                docker { image 'node:14-alpine' }
+            }
+            steps {
+                sh 'node --version'
             }
         }
     }
